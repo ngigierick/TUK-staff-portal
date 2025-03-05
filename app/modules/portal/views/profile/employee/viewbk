@@ -1,0 +1,586 @@
+<?php
+
+$this->breadcrumbs = array(
+	$model->label(2) => array('index'),
+	GxHtml::valueEx($model),
+);
+
+?>
+
+<?php
+ $this->widget('bootstrap.widgets.TbAlert', array(
+        'block'=>true, // display a larger alert block?
+        'fade'=>true, // use transitions?
+        'closeText'=>'&times;', // close link text - if set to false, no close link is displayed
+        'alerts'=>array( // configurations per alert type
+            'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'&times;'), // success, info, warning, error or danger
+			'error'=>array('block'=>true, 'fade'=>true, 'closeText'=>'&times;'), // success, info, warning, error or danger
+			'info'=>array('block'=>true, 'fade'=>true, 'closeText'=>'&times;'), // success, info, warning, error or danger
+			'warning'=>array('block'=>true, 'fade'=>true, 'closeText'=>'&times;'), // success, info, warning, error or danger
+	   ),
+	)
+); 
+
+?>
+
+<h1><?php echo GxHtml::valueEx($model->title).' '.GxHtml::encode($model->surname.' '.$model->firstname.' '.$model->othername.' ('.$model->pf_number.')'); ?></h1>
+<hr /><br />
+
+<table class="staff_div">
+<tr>
+<td>
+	<?php
+?>
+
+<?php
+		//contacts
+		$contact = $model->employeeContacts;
+
+			if(isset($contact[0]->id))
+			$co
+			=
+			"<table class='account'>
+			
+			<tr>
+			<td>
+			<table class='account'>
+			<tr><td class='lbl'>Faculty:</td><td>".$contact[0]->faculty."</td></tr>
+			<tr><td class='lbl'>School:</td><td>".$contact[0]->school."</td></tr>
+			<tr><td class='lbl'>Department:</td><td>".$contact[0]->department."</td></tr>
+			<tr><td class='lbl'>Current Designation:</td><td>".$contact[0]->designation."</td></tr>
+			<tr><td class='lbl'>Official Email:</td><td>".$contact[0]->office_email."</td></tr>
+			<tr><td class='lbl'>Office Telephone:</td><td>".$contact[0]->office_telephone."</td></tr>
+			<tr><td class='lbl'>Consultation Hours:</td><td>".$contact[0]->consultation_hours."</td></tr>
+			</table>
+			</td>
+			<td>
+			</td>
+			</tr>
+			
+			<tr>
+			<td colspan='2'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-edit" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Edit Contact & Designation Details', array('//hr/employeeContact/update','id'=>$contact[0]->id))
+			."
+			<td> </td>
+			</tr>
+			</table>";
+			
+			else $co =
+			"<table>
+			<tr><td colspan='9'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add Contact & Designation Details ', array('//hr/employeeContact/create'))
+			."</td></tr></table>";
+			
+	
+
+		//qualifications
+		$ql = GxHtml::openTag('table');
+		$ql .= '<tr>
+				<th>Level</th>
+				<th>Qualification Name</th>
+				<th>Institution</th>
+				<th>Year</th>
+			
+				';
+		$ql .= '<tr>
+				<th colspan="9"><hr /></th>
+				';
+		//sort 
+		$criteria = new CDbCriteria;
+		$criteria->with = array('level');
+		$criteria->condition  = "t.pf_number='".$model->pf_number."'";
+		$criteria->order='level.weight ASC';
+		$qual 	= EmployeeQualification::model()->findAll($criteria);		
+		foreach($qual as $relatedModel) {
+			$ql .= GxHtml::openTag('tr');
+			$ql .= '<td>'.$relatedModel->level.'</td>';
+			$ql .= '<td>'.$relatedModel->name.'</td>';
+			$ql .= '<td>'.$relatedModel->institution.'</td>';
+			$ql .= '<td>'.$relatedModel->year.'</td>';
+		
+			$ql .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeQualification/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$ql .= GxHtml::closeTag('tr');
+		}
+	
+		$ql .=
+			"<tr><td colspan='9'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add qualifications details ', array('//hr/employeeQualification/create','id'=>$model->id))
+			."</td></tr>";
+			
+		$ql .= GxHtml::closeTag('table');
+		//..end qualifications...
+		
+		//...work experience
+		$emp = GxHtml::openTag('table');
+		$emp .= '<tr>
+				<th>Period</th>
+				<th>Institution</th>
+				<th>Position</th>
+				';
+		$emp .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+		$criteria = new CDbCriteria;
+		$criteria->condition  = "t.pf_number='".$model->pf_number."'";
+		$criteria->order='ending_date DESC';
+		$work 	= EmployeeWork::model()->findAll($criteria);	
+		foreach($work as $relatedModel) {
+			$emp .= GxHtml::openTag('tr');
+			
+			$emp .= '<td>'.$relatedModel->starting_date.' - '.$relatedModel->ending_date.'</td>';
+			$emp .= '<td>'.$relatedModel->institution.'</td>';
+			$emp .= '<td>'.$relatedModel->position.'</td>';
+			
+			$emp .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeWork/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$emp .= GxHtml::closeTag('tr');
+		}
+	
+		$emp .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add work experience ', array('//hr/employeeWork/create'))
+			."</td></tr>";
+			
+		$emp .= GxHtml::closeTag('table');
+		//...end work experience...
+		
+		 	
+		
+		
+		//general statement
+		$st = GxHtml::openTag('table');
+		$st .= '<tr>
+				<th>General statement on research area</th>';
+			
+		$st .= '<tr>
+				<th colspan="4"><hr /></th>
+				';
+		foreach($model->employeeStatement as $relatedModel) {
+			$st .= GxHtml::openTag('tr');
+			$st .= '<td>'.$relatedModel->statement.'</td>';
+		
+			$st .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeStatement/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$st .= GxHtml::closeTag('tr');
+		}
+	
+		$st .=
+			"<tr><td colspan='4'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add Statement ', array('//hr/employeeStatement/create','id'=>$model->id))
+			."</td></tr>";
+			
+		$st .= GxHtml::closeTag('table');
+		//...general statement
+		
+		
+		
+		//...project
+		$pj = GxHtml::openTag('table');
+		$pj .= '<tr>
+				<th>Title</th>
+				<th>Area</th>
+				';
+		$pj .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeeProject as $relatedModel) {
+			$pj .= GxHtml::openTag('tr');
+			$pj .= '<td>'.$relatedModel->title.'</td>';
+			$pj .= '<td>'.$relatedModel->area.'</td>';
+			$pj .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeProject/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$pj .= GxHtml::closeTag('tr');
+		}
+	
+		$pj .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add research project ', array('//hr/employeeProject/create'))
+			."</td></tr>";
+			
+		$pj .= GxHtml::closeTag('table');
+		//...end project...
+		
+		
+		//...publication
+		$pb = GxHtml::openTag('table');
+		$pb .= '<tr>
+				<th>Title</th>
+				<th>Link</th>
+				';
+		$pb .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeePublication as $relatedModel) {
+			$pb .= GxHtml::openTag('tr');
+			$pb .= '<td>'.$relatedModel->title.'</td>';
+			$pb .= '<td>'.$relatedModel->link.'</td>';
+			//if($relatedModel->status) $pb .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Active</td>';
+			//else $pb .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Domant</td>';
+			$pb .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeePublication/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$pb .= GxHtml::closeTag('tr');
+		}
+	
+		$pb .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add publication ', array('//hr/employeePublication/create'))
+			."</td></tr>";
+			
+		$pb .= GxHtml::closeTag('table');
+		//...end publication...
+		
+		
+		//...supervision
+		$sp = GxHtml::openTag('table');
+		$sp .= '<tr>
+				<th>Name</th>
+				<th>Project Title</th>
+				<th>Period</th>
+				
+				';
+		$sp .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeeSupervision as $relatedModel) {
+			$sp .= GxHtml::openTag('tr');
+			$sp .= '<td>'.$relatedModel->student_name.'</td>';
+			$sp .= '<td>'.$relatedModel->title.'</td>';
+			$sp .= '<td>'.$relatedModel->period.'</td>';
+			//if($relatedModel->status) $sp .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Active</td>';
+			//else $sp .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Domant</td>';
+			$sp .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeSupervision/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$sp .= GxHtml::closeTag('tr');
+		}
+	
+		$sp .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add student supervision details ', array('//hr/employeeSupervision/create'))
+			."</td></tr>";
+			
+		$sp .= GxHtml::closeTag('table');
+		//...end supervision...
+		
+		
+		//...course taught
+		$ct = GxHtml::openTag('table');
+		$ct .= '<tr>
+				<th>Description</th>
+				<th>Period</th>
+			
+				';
+		$ct .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeeCourseTaught as $relatedModel) {
+			$ct .= GxHtml::openTag('tr');
+			$ct .= '<td>'.$relatedModel->description.'</td>';
+			$ct .= '<td>'.$relatedModel->period.'</td>';
+			//if($relatedModel->status) $ct .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Active</td>';
+			//else $ct .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Domant</td>';
+			$ct .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeCourseTaught/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$ct .= GxHtml::closeTag('tr');
+		}
+	
+		$ct .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add course you are teaching ', array('//hr/employeeCourseTaught/create'))
+			."</td></tr>";
+			
+		$ct .= GxHtml::closeTag('table');
+		//...end publication...
+		
+		//...profession
+		$pr = GxHtml::openTag('table');
+		$pr .= '<tr>
+				<th>Title</th>
+				<th>Institution</th>
+				';
+		$pr .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeeProfessional as $relatedModel) {
+			$pr .= GxHtml::openTag('tr');
+			$pr .= '<td>'.$relatedModel->title.'</td>';
+			$pr .= '<td>'.$relatedModel->institution.'</td>';
+			//if($relatedModel->status) $pr .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Active</td>';
+			//else $pr .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Domant</td>';
+			$pr .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeProfessional/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$pr .= GxHtml::closeTag('tr');
+		}
+	
+		$pr .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add professional qualifications details ', array('//hr/employeeProfessional/create'))
+			."</td></tr>";
+			
+		$pr .= GxHtml::closeTag('table');
+		//...end profession...
+		
+		//...extra
+		$ex = GxHtml::openTag('table');
+		$ex .= '<tr>
+				<th>Description</th>
+				
+				';
+		$ex .= '<tr>
+				<th colspan="5"><hr /></th>
+				';
+	
+		foreach($model->employeeExtra as $relatedModel) {
+			$ex .= GxHtml::openTag('tr');
+			$ex .= '<td>'.$relatedModel->description.'</td>';
+			//if($relatedModel->status) $ex .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Active</td>';
+			//else $ex .= '<td><span class="icon-ok">&nbsp;</span>&nbsp;&nbsp;Domant</td>';
+			$ex .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeExtra/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$ex .= GxHtml::closeTag('tr');
+		}
+	
+		$ex .=
+			"<tr><td colspan='5'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-plus" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Add extra information ', array('//hr/employeeExtra/create'))
+			."</td></tr>";
+			
+		$ex .= GxHtml::closeTag('table');
+		//...end extra info...
+		
+		//uploads
+		$fl = GxHtml::openTag('table');
+		$fl .= '<tr>
+				<th>Document category</th>
+				<th>Description/ name</th>
+				<th colspan="2"></th>
+
+				';
+		$fl .= '<tr>
+				<th colspan="9"><hr /></th>
+				';
+		foreach($model->employeeDocs as $relatedModel) {
+			$fl .= GxHtml::openTag('tr');
+			$fl .= '<td>'.$relatedModel->category.'</td>';
+			$fl .= '<td>'.$relatedModel->file_name.'</td>';
+			$fl .= '<td>'.GxHtml::link("<span class='icon-edit' >&nbsp;</span> Update", array('//hr/employeeDoc/update', 'id' => GxActiveRecord::extractPkValue($relatedModel, true))).'</td>';
+			$fl .= GxHtml::closeTag('tr');
+		}
+	
+		$fl .=
+			"<tr><td colspan='9'><hr/>".
+			CHtml::link('<span id="add_new_item" class="icon-upload" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Upload Document ', array('//hr/employeeDoc/create','id'=>$model->id))
+			."</td></tr>";
+			
+		$fl .= GxHtml::closeTag('table');
+		
+		
+?>
+
+
+<?php 
+	//structure passport photo url
+	$photo = str_replace("/", "-", $model->pf_number).'.JPG';
+	$photo = CHtml::image(Yii::app()->baseUrl.'/images/staff/'.$photo,'Passport photo not yet submitted',array('height'=>100,'class'=>'passport')); 
+	$photo = "<div class='staff-profile'>".$photo."</div>";
+?>
+<?php $this->widget('bootstrap.widgets.TbTabs', array(
+    'type'=>'tabs',
+    'placement'=>'left', // 'above', 'right', 'below' or 'left'
+    'tabs'=>array(
+	
+		array(
+		'label'=>'1 - Personal Information', 
+		'content'=>
+			"<table class='account'>
+			
+			<tr>
+			<td>
+			<table class='account'>
+			<tr><td class='lbl'>Salutation:</td><td>".$model->title."</td></tr>
+			<tr><td class='lbl'>Surname:</td><td>".$model->surname."</td></tr>
+			<tr><td class='lbl'>First Name:</td><td>".$model->firstname."</td></tr>
+			<tr><td class='lbl'>Other Names:</td><td>".$model->othername."</td></tr>
+			<tr><td class='lbl'>Gender:</td><td>".$model->gender."</td></tr>
+			</table>
+			</td>
+			<td>
+			<table class='account'>
+			<tr><td>".$photo."</td></tr>
+			</table>
+			</td>
+			</tr>
+			
+			<tr>
+			<td colspan='2'><hr />".
+			CHtml::link('<span id="add_new_item" class="icon-edit" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp; Edit Personal Information', '',  // the link for open the dialog
+    		array(
+        	'style'=>'cursor: pointer; text-decoration: underline;',
+        	'onclick'=>'{loadForm("index.php?r=portal/profile/update"); $("#dialogClassroom").dialog("open");}')).
+			"
+			<td> </td>
+			</tr>
+			</table>",
+			
+			'active'=>true
+		),
+		
+		
+		array(
+		'label'=>'2 - Contacts & Designation', 
+		'content'=>$co,
+			
+		),
+		
+		array(
+		'label'=>'3 - Education', 
+		'content'=>$ql,
+			
+		),
+		
+		
+		array(
+		'label'=>'4 - Work Experience', 
+		'content'=>$emp,
+			
+		),
+		
+		array(
+		'label'=>'5 - Research Statement', 
+		'content'=>$st,
+			
+		),
+		
+		array(
+		'label'=>'6 - Research Projects', 
+		'content'=>$pj,
+			
+		),
+		
+		array(
+		'label'=>'7 - Publications', 
+		'content'=>$pb,
+			
+		),
+		
+		array(
+		'label'=>'8 - Students Supervision', 
+		'content'=>$sp,
+			
+		),
+		
+		array(
+		'label'=>'9 - Courses Taught', 
+		'content'=>$ct,
+			
+		),
+		
+		array(
+		'label'=>'10 - Professional Qualifications', 
+		'content'=>$pr,
+			
+		),
+		array(
+		'label'=>'11 - Any other Information', 
+		'content'=>$ex,
+			
+		),
+		
+		array(
+		'label'=>'12 - Document Uploads', 
+		'content'=>$fl,
+			
+		),
+		
+     ),  
+)); 
+
+		
+?>
+<?php
+$this->beginWidget('zii.widgets.jui.CJuiDialog', array( // the dialog
+    'id'=>'dialogClassroom',
+    'options'=>array(
+        'title'=>'Staff Record Form',
+        'autoOpen'=>false,
+        'modal'=>true,
+        'width'=>800,
+        'height'=>600,
+    ),
+));?>
+<div class="divForForm"><span><div class="grid-view-loading progress-label"> &nbsp;</div>Loading page...</span></div>
+<?php $this->endWidget();?>
+<br /><br /><br /><br />
+<script type="text/javascript">
+// here is the magic
+function loadForm(link)
+{
+	<?php //$url =  "<script language=javascript>alert(url);</script>";?>
+	
+	<?php /*echo CHtml::ajax(array(
+            'url'=>array($url),
+            'data'=> "js:$(this).serialize()",
+            'type'=>'post',
+            'dataType'=>'json',
+            'success'=>"function(data)
+            {
+            	$('#dialogClassroom div.divForForm').html(url);
+            	
+                if (data.status == 'failure')
+                {
+                   
+				    $('#dialogClassroom div.divForForm').html(data.div);
+                     // Here is the trick: on submit-> once again this function!
+                    $('#dialogClassroom div.divForForm form').submit(loadForm);
+                }
+                else
+                {
+                    $('#dialogClassroom div.divForForm').html(data.div);
+                    
+                    setTimeout(\"$('#dialogClassroom').dialog('close') \",3000);
+                }
+                
+                $('#dialogClassroom div.divForForm').html('');
+ 
+            } ",
+            ))*/?>;
+            
+     	$.ajax({
+				  type: 'POST',
+				  'data': $(this).serialize(),
+				  url: link,
+				})
+				  .done(function( data, msg ){
+				  
+					var obj = $.parseJSON(data);
+					 if (obj.status == 'failure')
+                	{
+                   
+				    	$('#dialogClassroom div.divForForm').html(obj.div);
+                     	// Here is the trick: on submit-> once again this function!
+                   		// $('#dialogClassroom div.divForForm form').submit(loadForm);
+               		 }
+                	else
+                	{
+                    	$('#dialogClassroom div.divForForm').html(obj.div);
+                    
+                    	setTimeout(\"$('#dialogClassroom').dialog('close') \",3000);
+                	}
+					
+				
+				});
+    return false; 
+ 
+}
+ 
+</script>
+<br /><br />
+<?php $this->widget('bootstrap.widgets.TbButton', 
+array(
+	'type'=>'success',
+	'size'=>'small',
+	'icon'=>'print',
+	'url'=>array('fullProfile'),
+	'label'=>'View Full Profile',
+)); ?>
+</td>
+</tr>
+</table>
+
+<br /><br /><br /><br />

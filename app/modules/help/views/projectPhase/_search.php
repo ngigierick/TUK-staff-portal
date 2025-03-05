@@ -1,0 +1,34 @@
+
+<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+	'action' => Yii::app()->createUrl($this->route),
+	'method' => 'get',
+	'type'=>'horizontal',
+)); ?>
+
+	
+	<?php echo $form->textField($model, 'id'); ?>
+
+	
+	<?php echo $form->textField($model, 'name', array('maxlength' => 30)); ?>
+
+	
+	<?php echo $form->textArea($model, 'content'); ?>
+
+	
+	<?php echo $form->textField($model, 'date_added', array('maxlength' => 30)); ?>
+
+	
+	<?php echo $form->textField($model, 'date_modified', array('maxlength' => 30)); ?>
+
+	
+	<?php echo $form->dropDownList($model, 'status_id', GxHtml::listDataEx(Status::model()->findAllAttributes(null, true)), array('prompt' => Yii::t('app', 'All'))); ?>
+
+	<div class="form-actions">
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'buttonType'=>'submit',
+		'type'=>'primary',
+		'label'=>'Search',
+	)); ?>	</div>
+
+<?php $this->endWidget(); ?>
+
