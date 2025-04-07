@@ -109,9 +109,10 @@ return array(
 		 'admission',
 		 'finance',
 		 'portal',
+		 'cart',
 		 'courseApplication',
 		 'hr',
-		 'cart',
+		 'product',
 		  //audit trail
 		 'auditTrail'=>array(
 			'userClass' => 'User', // the class name for the user object
