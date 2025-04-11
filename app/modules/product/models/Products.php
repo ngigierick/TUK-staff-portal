@@ -36,15 +36,16 @@ class Products extends CActiveRecord
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
-			array('name, description, price, category, image', 'required'),
-			array('name, image', 'length', 'max'=>255),
+			array('name, description, price, category', 'required'),
+			array('name', 'length', 'max'=>255),
 			array('price', 'length', 'max'=>10),
 			array('category', 'length', 'max'=>50),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
+
+			// File validation: allow common image formats; image is optional
+			array('image', 'file', 'types'=>'jpg, jpeg, png, gif', 'allowEmpty'=>true, 'safe'=>false),
+
+			// For search
 			array('id, name, description, price, category, image', 'safe', 'on'=>'search'),
 		);
 	}
@@ -54,10 +55,7 @@ class Products extends CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
+		return array();
 	}
 
 	/**
@@ -81,20 +79,17 @@ class Products extends CActiveRecord
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		$criteria = new CDbCriteria;
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('price',$this->price,true);
-		$criteria->compare('category',$this->category,true);
-		$criteria->compare('image',$this->image,true);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('description', $this->description, true);
+		$criteria->compare('price', $this->price, true);
+		$criteria->compare('category', $this->category, true);
+		$criteria->compare('image', $this->image, true);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' => $criteria,
 		));
 	}
 }

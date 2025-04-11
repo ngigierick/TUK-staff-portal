@@ -34,4 +34,3 @@ Yii::app()->run();
 
 
 
-echo"@erick";

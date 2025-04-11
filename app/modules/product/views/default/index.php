@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
-    <link rel="stylesheet" href="test.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
 
@@ -67,8 +67,10 @@
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php echo CHtml::link('View', array('default/view', 'id' => $product->id)); ?> |
-                            <?php echo CHtml::link('Edit', array('default/update', 'id' => $product->id)); ?> |
+                            
+                         
+                        <?php echo CHtml::link('View', array('default/view', 'id' => $product->id)); ?> |
+                            <?php echo CHtml::link('Update/edit', array('default/update', 'id' => $product->id)); ?> |
                             <?php echo CHtml::link('Delete', array('default/delete', 'id' => $product->id), array(
                                 'confirm' => 'Are you sure you want to delete this product?'
                             )); ?>
