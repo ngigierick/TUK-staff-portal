@@ -113,6 +113,8 @@ return array(
 		 'courseApplication',
 		 'hr',
 		 'product',
+		 'housing',
+		 
 		  //audit trail
 		 'auditTrail'=>array(
 			'userClass' => 'User', // the class name for the user object
